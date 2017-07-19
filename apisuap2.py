@@ -3,11 +3,14 @@ import json, os, requests, getpass
 
 os.system('clear')
 
+token = ''
+
 def tela_menu(menu, msg):
 	os.system('clear')
 	print('\n')
-	msg_menu = "                  API DE DADOS DO SUAP - " + menu + "              "
-	print(msg_menu)
+	print('                    API DE DADOS DO SUAP                         ')
+	print('-----------------------------------------------------------------')
+	print('|   1-Login   |  2-Dados    |   3-Notas    |   0-Sair           |')
 	print('-----------------------------------------------------------------')
 	print(msg)
 	print('-----------------------------------------------------------------')
@@ -20,29 +23,38 @@ def cons_login(login, senha):
 	return token
 
 def cons_dados(mat, tok, aut):
-	dados = Request('https://suap.ifrn.edu.br/api/v2/edu/aluno/{}/'.format(mat))
+	
+	dados = Request('https://suap.ifrn.edu.br/api/v2/edu/alunos/{}/'.format(mat))
 	dados.add_header('Accept', 'application/json')
 	dados.add_header('X-CSRFToken', tok)
-	dados.add_header('Autorization', aut)
+	dados.add_header('Authorization', aut)
 
 	dados_byte = urlopen(dados).read()
-	dados_txt = dados_byte.decode('utf-8')
-	print(dados_txt)
+	#dados_txt = dados_byte.decode('utf-8')
+	dados_json = json.loads(dados_byte.decode('utf-8'))
+	return dados_json
 
+
+
+def bolsa(mat, tok, aut):
 	
+	dados_bolsa = Request('https://suap.ifrn.edu.br/api/v2/{}/'.format('bolsa'))
+	dados_bolsa.add_header('Accept', 'application/json')
+	dados_bolsa.add_header('X-CSRFToken', tok)
+	dados_bolsa.add_header('Authorization', aut)
 
-	#dados = requests.get('https://suap.ifrn.edu.br/api/v2/edu/alunos/{}/'.format('20132014050351'))
-	#dados_json = json.loads(dados.content.decode('utf-8'))
-	#print(dados_json)
-	return dados_byte
+	dados_byte = urlopen(dados_bolsa).read()
+	#dados_txt = dados_byte.decode('utf-8')
+	dados_json = json.loads(dados_byte.decode('utf-8'))
+	return dados_json
 
 
 tela_menu('MENU', 'teste')
 opcao = ''
 
 while opcao != '\x18':
-	opcoes = ('|  1-Login  |  2-Dados   |   3-Notas   |   0-Sair             |')
-	tela_menu('MENU', opcoes)
+	
+	tela_menu('MENU', '')
 
 	
 	if opcao == '1':
@@ -52,28 +64,41 @@ while opcao != '\x18':
 		while login == '':
 			login = 20132014050351#input(' Degite sua matricula => ')
 			senha = 'Qwqw123'#getpass.getpass(' Digite sua senha =>')
-			
 
 			MATRICULA = 20132014050351
-			TOKEN = 'Hq02aACXwizVEwQ8YlHdptbemmQ6tyFg5JivjRYQe5eJntpAr6vqP14uePOWNcRq'
+			#token = 'XRlPjOId7WLsW8HoGeQ60witnjd7dIw5bBZT7dmna0NTr4kuR1IbhAwLu97rfqUo'
 			AUTHORIZATION = 'Basic MjAxMzIwMTQwNTAzNTE6UXdxdzEyMw=='
 
 			token = cons_login(login, senha)
-			print(' Seu token e ' + token)
-			retorno = cons_dados(MATRICULA, TOKEN, AUTHORIZATION)
-			print(retorno)
+			print(' Seu token e: ' + token)
 		opcao = ''
 
 	elif opcao == '2':
-
+		MATRICULA = '20132014050351'
+		#TOKEN = 'XRlPjOId7WLsW8HoGeQ60witnjd7dIw5bBZT7dmna0NTr4kuR1IbhAwLu97rfqUo'
+		AUTHORIZATION = 'Basic MjAxMzIwMTQwNTAzNTE6UXdxdzEyMw=='
+		
 		tela_menu('DADOS', 'Consultar dados do aluno  - ESC para voltar ')
+		retorno = cons_dados(MATRICULA, token, AUTHORIZATION)
+		print(json.dumps(retorno, indent=4))
+
 		opcao = '' 
 
+
+
+
 	elif opcao == '3':
-		tela_menu('NOTAS', 'Consultar notas do aluno  - ESC para voltar ')
+		MATRICULA = '20132014050351'
+		#TOKEN = 'XRlPjOId7WLsW8HoGeQ60witnjd7dIw5bBZT7dmna0NTr4kuR1IbhAwLu97rfqUo'
+		AUTHORIZATION = 'Basic MjAxMzIwMTQwNTAzNTE6UXdxdzEyMw=='
+		tela_menu('BOLSAS', 'Consultar aluno com bolsa')
+		retorno = bolsa(MATRICULA, token, AUTHORIZATION)
+		#print(json.dumps(retorno, indent=4))
+
 		opcao = '' 
 
 	elif opcao == '0':
+		
 		print('Opcao 0 - Sair')
 		opcao = '\x18'
 		print(opcao)
