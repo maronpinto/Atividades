@@ -1,6 +1,6 @@
-import json, requests
+import requests
+import json
 import os, getpass
-
 os.system('clear')
 
 print('                        API - SUAP                         ')
@@ -12,9 +12,3 @@ consulta = requests.post('https://suap.ifrn.edu.br/api/autenticacao/token/?forma
 cons_json = json.loads(consulta.content.decode('utf-8'))
 token = cons_json['token']
 print(' Seu token => ' + token)
-
-cons_meusdados = requests.get('https://suap.ifrn.edu.br/api/minhas-dados/?format=json', json={'token':token})
-print(cons_meusdados.content.decode())
-
-print('\n\n\n')
-#print(json.dumps(cons_json)) 
