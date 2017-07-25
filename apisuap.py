@@ -39,7 +39,7 @@ def cons_dados(mat, tok, aut):
 
 def bolsa(mat, tok, aut):
 	
-	dados_bolsa = Request('https://suap.ifrn.edu.br/api/v2/ae/bolsas/?limit=100&offset=100')
+	dados_bolsa = Request('https://suap.ifrn.edu.br/api/v2/ae/bolsas/?limit=200&offset=100')
 	dados_bolsa.add_header('Accept', 'application/json')
 	dados_bolsa.add_header('X-CSRFToken', tok)
 	dados_bolsa.add_header('Authorization', aut)
@@ -49,6 +49,19 @@ def bolsa(mat, tok, aut):
 	dados_json = json.loads(dados_txt)
 	
 	return dados_json
+
+
+def bolsa_id(num_id, tok, aut):
+	
+	dados_bolsa_id = Request('https://suap.ifrn.edu.br/api/v2/ae/bolsas/{}/'.format(num_id))
+	dados_bolsa_id.add_header('Accept', 'application/json')
+	dados_bolsa_id.add_header('X-CSRFToken', tok)
+	dados_bolsa_id.add_header('Authorization', aut)
+
+	dados_byte_id = urlopen(dados_bolsa_id).read()
+	dados_txt_id = dados_byte_id.decode('utf-8')
+	
+	return dados_txt_id
 
 
 tela_menu('MENU', 'teste')
@@ -77,7 +90,7 @@ while opcao != '\x18':
 
 	elif opcao == '2':
 		#MATRICULA = '20132014050351'
-		#TOKEN = 'XRlPjOId7WLsW8HoGeQ60witnjd7dIw5bBZT7dmna0NTr4kuR1IbhAwLu97rfqUo'
+		TOKEN = 'XRlPjOId7WLsW8HoGeQ60witnjd7dIw5bBZT7dmna0NTr4kuR1IbhAwLu97rfqUo'
 		AUTHORIZATION = 'Basic MjAxMzIwMTQwNTAzNTE6UXdxdzEyMw=='
 		
 		tela_menu('DADOS', 'Consultar dados do aluno  - ESC para voltar ')
@@ -91,14 +104,15 @@ while opcao != '\x18':
 
 
 	elif opcao == '3':
+		num_id = input(' Digite o ID=> ')
 
 		AUTHORIZATION = 'Basic MjAxMzIwMTQwNTAzNTE6UXdxdzEyMw=='
 		tela_menu('BOLSAS', 'Consultar aluno com bolsa')
-		retorno = bolsa(MATRICULA, token, AUTHORIZATION)
-		
-		for item in range(0, 100):
-			print(str(item) + ' - ' + retorno['results'][item]['aluno'])	
+		retorno = bolsa_id(num_id, token, AUTHORIZATION)
+		bolsista = json.loads(retorno)
 
+		
+		print(json.dumps(bolsista, indent=4))
 		#print(json.dumps(retorno, indent=4))
 
 		opcao = '' 
